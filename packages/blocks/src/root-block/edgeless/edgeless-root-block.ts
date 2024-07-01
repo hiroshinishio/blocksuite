@@ -1,5 +1,4 @@
 import '../../surface-block/surface-block.js';
-import './components/block-portal/frame/edgeless-frame.js';
 import './components/toolbar/edgeless-toolbar.js';
 
 import type { SurfaceSelection } from '@blocksuite/block-std';
@@ -27,6 +26,7 @@ import {
   on,
   Point,
   requestConnectedFrame,
+  requestThrottledConnectFrame,
   type Viewport,
 } from '../../_common/utils/index.js';
 import { humanFileSize } from '../../_common/utils/math.js';
@@ -42,7 +42,7 @@ import type {
 import {
   Bound,
   type IBound,
-  type IVec2,
+  type IVec,
   normalizeWheelDeltaY,
   serializeXYWH,
   Vec,
@@ -86,7 +86,7 @@ import {
   DEFAULT_NOTE_OFFSET_Y,
   DEFAULT_NOTE_WIDTH,
 } from './utils/consts.js';
-import { isCanvasElement } from './utils/query.js';
+import { getBackgroundGrid, isCanvasElement } from './utils/query.js';
 export interface EdgelessViewport {
   left: number;
   top: number;
@@ -168,7 +168,16 @@ export class EdgelessRootBlockComponent extends BlockElement<
       height: 100%;
     }
 
-    .affine-edgeless-layer {
+    .edgeless-background {
+      height: 100%;
+      background-color: var(--affine-background-primary-color);
+      background-image: radial-gradient(
+        var(--affine-edgeless-grid-color) 1px,
+        var(--affine-background-primary-color) 1px
+      );
+    }
+
+    .edgeless-layer {
       position: absolute;
       top: 0;
       left: 0;
@@ -187,6 +196,22 @@ export class EdgelessRootBlockComponent extends BlockElement<
   private readonly _themeObserver = new ThemeObserver();
 
   private _resizeObserver: ResizeObserver | null = null;
+
+  private _refreshLayerViewport = requestThrottledConnectFrame(() => {
+    if (!this.surface) return;
+
+    const { zoom, translateX, translateY } = this.service.viewport;
+    const { gap } = getBackgroundGrid(zoom, true);
+
+    this.background.style.setProperty(
+      'background-position',
+      `${translateX}px ${translateY}px`
+    );
+    this.background.style.setProperty('background-size', `${gap}px ${gap}px`);
+
+    this.layer.style.setProperty('transform', this._getLayerViewport());
+    this.layer.dataset.scale = zoom.toString();
+  }, this);
 
   /**
    * Disable components
@@ -214,8 +239,11 @@ export class EdgelessRootBlockComponent extends BlockElement<
   @query('edgeless-block-portal-container')
   accessor rootElementContainer!: EdgelessBlockPortalContainer;
 
-  @query('.affine-edgeless-layer')
-  accessor edgelessLayer!: HTMLDivElement;
+  @query('.edgeless-layer')
+  accessor layer!: HTMLDivElement;
+
+  @query('.edgeless-background')
+  accessor background!: HTMLDivElement;
 
   clipboardController = new EdgelessClipboardController(this);
 
@@ -235,6 +263,16 @@ export class EdgelessRootBlockComponent extends BlockElement<
     if (!this.components.toolbar) {
       createToolbar();
     }
+  }
+
+  private _getLayerViewport(negative = false) {
+    const { translateX, translateY, zoom } = this.service.viewport;
+
+    if (negative) {
+      return `scale(${1 / zoom}) translate(${-translateX}px, ${-translateY}px)`;
+    }
+
+    return `translate(${translateX}px, ${translateY}px) scale(${zoom})`;
   }
 
   private _initSlotEffects() {
@@ -376,7 +414,6 @@ export class EdgelessRootBlockComponent extends BlockElement<
       const viewport =
         service.editPropsStore.getStorage('viewport') ??
         service.getFitToScreenData();
-
       if ('xywh' in viewport) {
         const bound = Bound.deserialize(viewport.xywh);
         service.viewport.setViewportByBound(bound, viewport.padding);
@@ -581,7 +618,7 @@ export class EdgelessRootBlockComponent extends BlockElement<
 
   async addImages(
     files: File[],
-    point?: IVec2,
+    point?: IVec,
     inTopLeft?: boolean
   ): Promise<string[]> {
     const imageFiles = [...files].filter(file =>
@@ -663,7 +700,7 @@ export class EdgelessRootBlockComponent extends BlockElement<
     return blockIds;
   }
 
-  async addAttachments(files: File[], point?: IVec2): Promise<string[]> {
+  async addAttachments(files: File[], point?: IVec): Promise<string[]> {
     if (!files.length) return [];
 
     const attachmentService = this.host.spec.getService('affine:attachment');
@@ -789,7 +826,7 @@ export class EdgelessRootBlockComponent extends BlockElement<
     this._initPixelRatioChangeEffect();
     this._initFontLoader();
     this._initRemoteCursor();
-    this._initSurface();
+    // this._initSurface();
 
     this._initViewport();
     this._initWheelEvent();
@@ -803,6 +840,12 @@ export class EdgelessRootBlockComponent extends BlockElement<
       this._handleToolbarFlag();
       this.requestUpdate();
     }, this);
+
+    this._disposables.add(
+      this.service.viewport.viewportUpdated.on(() => {
+        this._refreshLayerViewport();
+      })
+    );
   }
 
   override connectedCallback() {
@@ -853,8 +896,13 @@ export class EdgelessRootBlockComponent extends BlockElement<
     );
 
     return html`${this.host.renderModel(this.surfaceBlockModel)}
-      <edgeless-block-portal-container .edgeless=${this}>
-      </edgeless-block-portal-container>
+      <div class="edgeless-background">
+        <div class="edgeless-layer">
+          ${this.renderChildren(this.model)}${this.renderChildren(
+            this.surfaceBlockModel
+          )}
+        </div>
+      </div>
       <div class="widgets-container">${widgets}</div> `;
   }
 }

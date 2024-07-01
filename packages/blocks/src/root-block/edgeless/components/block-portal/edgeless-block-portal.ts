@@ -1,9 +1,6 @@
 /* eslint-disable lit/binding-positions, lit/no-invalid-html */
-import './note/edgeless-note.js';
-import './image/edgeless-image.js';
 import './bookmark/edgeless-bookmark.js';
 import './attachment/edgeless-attachment.js';
-import './frame/edgeless-frame.js';
 import './embed/edgeless-embed.js';
 import './edgeless-text/edgeless-edgeless-text.js';
 import '../rects/edgeless-selected-rect.js';

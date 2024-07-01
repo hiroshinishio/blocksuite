@@ -51,9 +51,7 @@ export class EmbedBlockElement<
   }
 
   get bound(): Bound {
-    return Bound.deserialize(
-      (this.edgeless?.service.getElementById(this.model.id) ?? this.model).xywh
-    );
+    return Bound.deserialize(this.model.xywh);
   }
 
   @query('.embed-block-container')

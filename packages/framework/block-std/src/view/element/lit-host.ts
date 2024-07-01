@@ -16,6 +16,7 @@ import type { StaticValue } from 'lit/static-html.js';
 import { html, unsafeStatic } from 'lit/static-html.js';
 
 import type { CommandManager } from '../../command/index.js';
+import { Viewport } from '../../edgeless/viewport.js';
 import type { UIEventDispatcher } from '../../event/index.js';
 import { BlockStdScope } from '../../scope/index.js';
 import type { SelectionManager } from '../../selection/index.js';
@@ -69,6 +70,8 @@ export class EditorHost extends WithDisposable(ShadowlessElement) {
   std!: BlockSuite.Std;
 
   rangeManager: RangeManager | null = null;
+
+  viewport!: Viewport;
 
   readonly slots = {
     unmounted: new Slot(),
@@ -166,6 +169,7 @@ export class EditorHost extends WithDisposable(ShadowlessElement) {
     this.std.mount();
     this.std.spec.applySpecs(this.specs);
     this.rangeManager = new RangeManager(this);
+    this.viewport = new Viewport();
     this.tabIndex = 0;
   }
 
