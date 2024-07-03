@@ -36,7 +36,7 @@ import {
   PLAIN_TEXT_LANG_INFO,
   type StrictLanguageInfo,
 } from './utils/consts.js';
-import { getHighLighter } from './utils/high-lighter.js';
+import { getHighlighterInstance } from './utils/high-lighter.js';
 
 @customElement('affine-code')
 export class CodeBlockComponent extends BlockComponent<CodeBlockModel> {
@@ -122,7 +122,7 @@ export class CodeBlockComponent extends BlockComponent<CodeBlockModel> {
       }
       return;
     }
-    this._highlighter = await getHighLighter({
+    this._highlighter = await getHighlighterInstance({
       themes: [LIGHT_THEME, DARK_THEME],
       langs: [lang.id],
     });

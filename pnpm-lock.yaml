@@ -275,8 +275,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       shiki:
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.10.1
+        version: 1.10.1
       sortablejs:
         specifier: ^1.15.2
         version: 1.15.2
@@ -1485,6 +1485,9 @@ packages:
   '@sgtpooki/file-type@1.0.1':
     resolution: {integrity: sha512-euhw9uNs5CxYZ4uJQe1ZPfDAWppTD0j8WyuO82rDz6KFLGMIia4KAZXTeLTMyo/BMCBvMwZRPoxNwHqdctlfTA==}
     engines: {node: '>=18'}
+
+  '@shikijs/core@1.10.1':
+    resolution: {integrity: sha512-qdiJS5a/QGCff7VUFIqd0hDdWly9rDp8lhVmXVrS11aazX8LOTRLHAXkkEeONNsS43EcCd7gax9LLoOz4vlFQA==}
 
   '@shikijs/core@1.6.1':
     resolution: {integrity: sha512-CqYyepN4SnBopaoXYwng4NO8riB5ask/LTCkhOFq+GNGtr2X+aKeD767eYdqYukeixEUvv4bXdyTYVaogj7KBw==}
@@ -4244,6 +4247,9 @@ packages:
   shiki@0.14.7:
     resolution: {integrity: sha512-dNPAPrxSc87ua2sKJ3H5dQ/6ZaY8RNnaAqK+t0eG7p0Soi2ydiqbGOTaZCqaYvA/uZYfS1LJnemt3Q+mSfcPCg==}
 
+  shiki@1.10.1:
+    resolution: {integrity: sha512-uafV7WCgN4YYrccH6yxpnps6k38sSTlFRrwc4jycWmhWxJIm9dPrk+XkY1hZ2t0I7jmacMNb15Lf2fspa/Y3lg==}
+
   shiki@1.6.1:
     resolution: {integrity: sha512-1Pu/A1rtsG6HZvQm4W0NExQ45e02og+rPog7PDaFDiMumZgOYnZIu4JtGQeAIfMwdbKSjJQoCUr79vDLKUUxWA==}
 
@@ -6003,6 +6009,8 @@ snapshots:
       ieee754: 1.2.1
       peek-readable: 5.0.0
       uint8arrays: 5.1.0
+
+  '@shikijs/core@1.10.1': {}
 
   '@shikijs/core@1.6.1': {}
 
@@ -9166,6 +9174,10 @@ snapshots:
       vscode-oniguruma: 1.7.0
       vscode-textmate: 8.0.0
 
+  shiki@1.10.1:
+    dependencies:
+      '@shikijs/core': 1.10.1
+
   shiki@1.6.1:
     dependencies:
       '@shikijs/core': 1.6.1
@@ -9687,7 +9699,7 @@ snapshots:
       focus-trap: 7.5.4
       mark.js: 8.11.1
       minisearch: 6.3.0
-      shiki: 1.6.1
+      shiki: 1.10.1
       vite: 5.2.12(@types/node@20.12.13)(terser@5.31.0)
       vue: 3.4.27(typescript@5.4.5)
     optionalDependencies:

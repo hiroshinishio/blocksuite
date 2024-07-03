@@ -34,7 +34,7 @@ import { unified } from 'unified';
 
 import { isPlaintext } from '../../code-block/utils/code-languages.js';
 import { DARK_THEME, LIGHT_THEME } from '../../code-block/utils/consts.js';
-import { getHighLighter } from '../../code-block/utils/high-lighter.js';
+import { getHighlighterInstance } from '../../code-block/utils/high-lighter.js';
 import {
   highlightCache,
   type highlightCacheKey,
@@ -946,7 +946,7 @@ export class HtmlAdapter extends BaseAdapter<Html> {
     }
     const lang = rawLang as BundledLanguage;
 
-    const highlighter = await getHighLighter({
+    const highlighter = await getHighlighterInstance({
       langs: [lang],
       themes: [LIGHT_THEME, DARK_THEME],
     });
