@@ -126,6 +126,7 @@ export function toEdgelessBlockElement<
     }
 
     override renderBlock() {
+      console.log('render edgeless block: ', this.model.flavour);
       const { xywh, index } = this.model as BlockModel<{
         xywh: SerializedXYWH;
         index: string;

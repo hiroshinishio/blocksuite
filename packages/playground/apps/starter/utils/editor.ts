@@ -11,8 +11,10 @@ import { assertExists } from '@blocksuite/global/utils';
 import {
   AffineEditorContainer,
   affineFormatBarItemConfig,
+  AIChatBlockSpec,
   CommentPanel,
   CopilotPanel,
+  EdgelessAIChatBlockSpec,
 } from '@blocksuite/presets';
 import type { BlockCollection } from '@blocksuite/store';
 import type { DocCollection } from '@blocksuite/store';
@@ -62,7 +64,8 @@ export async function mountDefaultDocEditor(collection: DocCollection) {
   const modeService = createDocModeService(doc.id);
   setDocModeFromUrlParams(modeService);
   const editor = new AffineEditorContainer();
-  editor.pageSpecs = [...PageEditorBlockSpecs].map(spec => {
+  const pageSpecs = [...PageEditorBlockSpecs, AIChatBlockSpec];
+  editor.pageSpecs = [...pageSpecs].map(spec => {
     if (spec.schema.model.flavour === 'affine:page') {
       spec = patchPageRootSpec(
         spec as BlockSpec<'affine:page', PageRootService>
@@ -70,7 +73,12 @@ export async function mountDefaultDocEditor(collection: DocCollection) {
     }
     return spec;
   });
-  editor.edgelessSpecs = [...EdgelessEditorBlockSpecs].map(spec => {
+  const edgelessSpecs = [
+    ...EdgelessEditorBlockSpecs,
+    AIChatBlockSpec,
+    EdgelessAIChatBlockSpec,
+  ];
+  editor.edgelessSpecs = [...edgelessSpecs].map(spec => {
     if (spec.schema.model.flavour === 'affine:page') {
       spec = patchPageRootSpec(
         spec as BlockSpec<'affine:page', PageRootService>

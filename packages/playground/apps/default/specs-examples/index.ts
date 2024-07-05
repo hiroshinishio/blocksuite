@@ -3,6 +3,7 @@ import {
   PageEditorBlockSpecs,
 } from '@blocksuite/blocks';
 
+import { getAIChatSpecs } from './ai-chat/ai-chat.js';
 import { getCustomAttachmentSpecs } from './custom-attachment/custom-attachment.js';
 import { getLatexSpecs } from './latex/latex.js';
 
@@ -21,6 +22,11 @@ export function getExampleSpecs() {
   }
   if (type === 'latex') {
     const specs = getLatexSpecs();
+    pageModeSpecs = specs.pageModeSpecs;
+    edgelessModeSpecs = specs.edgelessModeSpecs;
+  }
+  if (type === 'ai-chat') {
+    const specs = getAIChatSpecs();
     pageModeSpecs = specs.pageModeSpecs;
     edgelessModeSpecs = specs.edgelessModeSpecs;
   }

@@ -4,6 +4,7 @@ import { BlockModel } from '@blocksuite/store';
 import {
   getBoundsWithRotation,
   getPointsFromBoundsWithRotation,
+  linePolygonIntersects,
   polygonGetPointTangent,
   polygonNearestPoint,
   rotatePoints,
@@ -13,10 +14,6 @@ import { Bound } from './bound.js';
 import { PointLocation } from './point-location.js';
 import type { SerializedXYWH } from './types.js';
 import type { IVec } from './vec.js';
-import { Vec } from './vec.js';
-
-export const EPSILON = 1e-12;
-export const MACHINE_EPSILON = 1.12e-16;
 
 export interface IHitTestOptions {
   expand?: number;
@@ -183,68 +180,4 @@ export function selectable<
   }
 
   return SuperClass as unknown as typeof EdgelessBlockModel<Props>;
-}
-
-export function clamp(n: number, min: number, max?: number): number {
-  return Math.max(min, max !== undefined ? Math.min(n, max) : n);
-}
-
-export function almostEqual(a: number, b: number, epsilon = 0.0001) {
-  return Math.abs(a - b) < epsilon;
-}
-
-export function lineIntersects(
-  sp: IVec,
-  ep: IVec,
-  sp2: IVec,
-  ep2: IVec,
-  infinite = false
-): IVec | null {
-  const v1 = Vec.sub(ep, sp);
-  const v2 = Vec.sub(ep2, sp2);
-  const cross = Vec.cpr(v1, v2);
-  // Avoid divisions by 0, and errors when getting too close to 0
-  if (almostEqual(cross, 0, MACHINE_EPSILON)) return null;
-  const d = Vec.sub(sp, sp2);
-  let u1 = Vec.cpr(v2, d) / cross;
-  const u2 = Vec.cpr(v1, d) / cross,
-    // Check the ranges of the u parameters if the line is not
-    // allowed to extend beyond the definition points, but
-    // compare with EPSILON tolerance over the [0, 1] bounds.
-    epsilon = /*#=*/ EPSILON,
-    uMin = -epsilon,
-    uMax = 1 + epsilon;
-
-  if (infinite || (uMin < u1 && u1 < uMax && uMin < u2 && u2 < uMax)) {
-    // Address the tolerance at the bounds by clipping to
-    // the actual range.
-    if (!infinite) {
-      u1 = clamp(u1, 0, 1);
-    }
-    return Vec.lrp(sp, ep, u1);
-  }
-
-  return null;
-}
-
-export function linePolygonIntersects(
-  sp: IVec,
-  ep: IVec,
-  points: IVec[]
-): PointLocation[] | null {
-  const result: PointLocation[] = [];
-  const len = points.length;
-
-  for (let i = 0; i < len; i++) {
-    const p = points[i];
-    const p2 = points[(i + 1) % len];
-    const rst = lineIntersects(sp, ep, p, p2);
-    if (rst) {
-      const v = new PointLocation(rst);
-      v.tangent = Vec.normalize(Vec.sub(p2, p));
-      result.push(v);
-    }
-  }
-
-  return result.length ? result : null;
 }

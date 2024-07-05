@@ -1,5 +1,6 @@
 import { AffineSchemas, TestUtils } from '@blocksuite/blocks';
 import { assertExists } from '@blocksuite/global/utils';
+import { AIChatBlockSchema } from '@blocksuite/presets';
 import type { BlockCollection } from '@blocksuite/store';
 import {
   DocCollection,
@@ -19,6 +20,7 @@ import {
 
 import { MockServerBlobSource } from '../../_common/sync/blob/mock-server.js';
 import type { InitFn } from '../data/utils.js';
+import { patchSchemaChildren } from './schema.js';
 
 const params = new URLSearchParams(location.search);
 const room = params.get('room');
@@ -28,7 +30,13 @@ const blobSourceArgs = (params.get('blobSource') ?? '').split(',');
 export function createStarterDocCollection() {
   const collectionId = room ?? 'starter';
   const schema = new Schema();
-  schema.register(AffineSchemas);
+  const schemas = [...AffineSchemas, AIChatBlockSchema];
+  const surfaceBlockSchema = schemas.find(
+    schema => schema.model.flavour === 'affine:surface'
+  );
+  assertExists(surfaceBlockSchema);
+  patchSchemaChildren(AIChatBlockSchema, surfaceBlockSchema);
+  schema.register(schemas);
   const idGenerator = isE2E ? Generator.AutoIncrement : Generator.NanoID;
 
   let docSources: StoreOptions['docSources'];
@@ -78,7 +86,7 @@ export function createStarterDocCollection() {
 
   // debug info
   window.collection = collection;
-  window.blockSchemas = AffineSchemas;
+  window.blockSchemas = schemas;
   window.job = new Job({ collection: collection });
   window.Y = DocCollection.Y;
   window.testUtils = new TestUtils();

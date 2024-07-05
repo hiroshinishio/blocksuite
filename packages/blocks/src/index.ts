@@ -28,6 +28,8 @@ export type {
 export {
   createLitPortal,
   HoverController,
+  peek,
+  Peekable,
   PeekableController,
   RichText,
   scrollbarStyle,
