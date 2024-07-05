@@ -43,6 +43,9 @@ export class EdgelessNoteMask extends WithDisposable(ShadowlessElement) {
   @property({ attribute: false })
   accessor host!: EditorHost;
 
+  @property({ attribute: false })
+  accessor rootService!: EdgelessRootService;
+
   protected override firstUpdated() {
     const maskDOM = this.renderRoot!.querySelector('.affine-note-mask');
     const observer = new ResizeObserver(entries => {
@@ -87,7 +90,8 @@ export class EdgelessNoteMask extends WithDisposable(ShadowlessElement) {
           zIndex: '1',
           pointerEvents: this.display ? 'auto' : 'none',
           borderRadius: `${
-            this.model.edgeless.style.borderRadius * this.host.viewport!.zoom
+            this.model.edgeless.style.borderRadius *
+            this.rootService.viewport!.zoom
           }px`,
         })}
       ></div>
@@ -171,7 +175,7 @@ export class EdgelessNoteBlockComponent extends toEdgelessBlockElement(
   private accessor _affineNote!: HTMLDivElement;
 
   get _zoom() {
-    return this.host.viewport.zoom;
+    return this.rootService.viewport.zoom;
   }
 
   private get _isShowCollapsedContent() {
@@ -299,7 +303,7 @@ export class EdgelessNoteBlockComponent extends toEdgelessBlockElement(
     const height = bound.h / scale;
 
     const rect = this._affineNote.getBoundingClientRect();
-    const zoom = this.host.viewport.zoom;
+    const zoom = this.rootService.viewport.zoom;
     this._noteFullHeight =
       rect.height / scale / zoom + 2 * EDGELESS_BLOCK_CHILD_PADDING;
 
@@ -349,7 +353,7 @@ export class EdgelessNoteBlockComponent extends toEdgelessBlockElement(
       const affineNote = this._affineNote;
       if (!this._affineNote) return;
       const rect = affineNote.getBoundingClientRect();
-      const zoom = this.host.viewport.zoom;
+      const zoom = this.rootService.viewport.zoom;
       const scale = this.model.edgeless.scale ?? 1;
       this._noteFullHeight =
         rect.height / scale / zoom + 2 * EDGELESS_BLOCK_CHILD_PADDING;
@@ -494,6 +498,7 @@ export class EdgelessNoteBlockComponent extends toEdgelessBlockElement(
           .display=${!this._editing}
           .model=${this.model}
           .host=${this.host}
+          .rootService=${this.rootService}
         ></edgeless-note-mask>
       </div>
     `;
