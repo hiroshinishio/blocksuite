@@ -871,6 +871,12 @@ export class EdgelessRootBlockComponent extends BlockElement<
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.mouseRoot = this.parentElement!;
     this._initTools();
+
+    this._disposables.add(
+      this.surfaceBlockModel.childrenUpdated.on(() => {
+        this.requestUpdate();
+      })
+    );
   }
 
   override disconnectedCallback() {
