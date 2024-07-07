@@ -217,6 +217,9 @@ importers:
       html2canvas:
         specifier: ^1.4.1
         version: 1.4.1
+      inversify:
+        specifier: ^6.0.2
+        version: 6.0.2
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
@@ -262,6 +265,9 @@ importers:
       pdf-lib:
         specifier: ^1.17.1
         version: 1.17.1
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       rehype-parse:
         specifier: ^9.0.0
         version: 9.0.0
@@ -333,12 +339,18 @@ importers:
       '@blocksuite/global':
         specifier: workspace:*
         version: link:../global
+      inversify:
+        specifier: ^6.0.2
+        version: 6.0.2
       lit:
         specifier: ^3.1.3
         version: 3.1.3
       lz-string:
         specifier: ^1.5.0
         version: 1.5.0
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       w3c-keyname:
         specifier: ^2.2.8
         version: 2.2.8
@@ -477,6 +489,9 @@ importers:
       intl-segmenter-polyfill-rs:
         specifier: ^0.1.7
         version: 0.1.7
+      inversify:
+        specifier: ^6.0.2
+        version: 6.0.2
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
@@ -492,6 +507,9 @@ importers:
       merge:
         specifier: ^2.1.1
         version: 2.1.1
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       tweakpane:
         specifier: ^4.0.3
         version: 4.0.3
@@ -3072,6 +3090,9 @@ packages:
   intl-segmenter-polyfill-rs@0.1.7:
     resolution: {integrity: sha512-vHXaILHOdbHrcPlbA0WJeMGYjodHa5mLF142k1Q8FQeJ5H+tFV6zT/saPXjDW5Lc+GDyaD+uSDJgcHmw2ri3Vg==}
 
+  inversify@6.0.2:
+    resolution: {integrity: sha512-i9m8j/7YIv4mDuYXUAcrpKPSaju/CIly9AHK5jvCBeoiM/2KEsuCQTTP+rzSWWpLYWRukdXFSl6ZTk2/uumbiA==}
+
   is-arrayish@0.2.1:
     resolution: {integrity: sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg==}
 
@@ -4047,6 +4068,9 @@ packages:
   readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
+
+  reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
   regenerator-runtime@0.14.1:
     resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
@@ -7779,6 +7803,8 @@ snapshots:
 
   intl-segmenter-polyfill-rs@0.1.7: {}
 
+  inversify@6.0.2: {}
+
   is-arrayish@0.2.1: {}
 
   is-arrayish@0.3.2: {}
@@ -8945,6 +8971,8 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+
+  reflect-metadata@0.2.2: {}
 
   regenerator-runtime@0.14.1: {}
 

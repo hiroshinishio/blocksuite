@@ -18,11 +18,16 @@ import type {
   TextSelection,
 } from '@blocksuite/block-std';
 import type { EditorHost } from '@blocksuite/block-std';
-import { ShadowlessElement, WithDisposable } from '@blocksuite/block-std';
-import type { ImageSelection } from '@blocksuite/blocks';
+import {
+  container,
+  ShadowlessElement,
+  WithDisposable,
+} from '@blocksuite/block-std';
+import type { DocModeService, ImageSelection } from '@blocksuite/blocks';
 import {
   isInsidePageEditor,
   PaymentRequiredError,
+  TYPES,
   UnauthorizedError,
 } from '@blocksuite/blocks';
 import { css, html, nothing, type PropertyValues } from 'lit';
@@ -185,8 +190,13 @@ export class ChatPanelMessages extends WithDisposable(ShadowlessElement) {
           this.requestUpdate();
         })
       );
-      const { docModeService } = this.host.spec.getService('affine:page');
-      disposables.add(docModeService.onModeChange(() => this.requestUpdate()));
+      const docModeService = container.get<DocModeService>(TYPES.DocMode);
+      disposables.add(
+        docModeService.onModeChange(
+          () => this.requestUpdate(),
+          this.host.doc.id
+        )
+      );
     }
   }
 

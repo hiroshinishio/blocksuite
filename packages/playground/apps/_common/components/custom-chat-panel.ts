@@ -1,4 +1,9 @@
-import { ShadowlessElement, WithDisposable } from '@blocksuite/block-std';
+import {
+  container,
+  ShadowlessElement,
+  WithDisposable,
+} from '@blocksuite/block-std';
+import { type DocModeService, TYPES } from '@blocksuite/blocks';
 import type { AffineEditorContainer } from '@blocksuite/presets';
 import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -36,14 +41,13 @@ export class CustomChatPanel extends WithDisposable(ShadowlessElement) {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    const { editor } = this;
-    const { docModeService } = editor.host.spec.getService('affine:page');
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
     this.disposables.add(
       docModeService.onModeChange(() => {
         this.editor.updateComplete
           .then(() => this.requestUpdate())
           .catch(console.error);
-      })
+      }, this.editor.doc.id)
     );
   }
 

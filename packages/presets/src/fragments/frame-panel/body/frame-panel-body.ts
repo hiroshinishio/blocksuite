@@ -1,15 +1,18 @@
 import '../card/frame-card.js';
 
 import {
+  container,
   type EditorHost,
   ShadowlessElement,
   WithDisposable,
 } from '@blocksuite/block-std';
 import {
   Bound,
+  type DocModeService,
   type EdgelessRootBlockComponent,
   type FrameBlockModel,
   generateKeyBetween,
+  TYPES,
 } from '@blocksuite/blocks';
 import { DisposableGroup } from '@blocksuite/global/utils';
 import type { Doc } from '@blocksuite/store';
@@ -250,7 +253,8 @@ export class FramePanelBody extends WithDisposable(ShadowlessElement) {
 
       const rootService = this.editorHost.spec.getService('affine:page');
       rootService.editPropsStore.setStorage('viewport', viewport);
-      rootService.docModeService.setMode('edgeless');
+      const docModeService = container.get<DocModeService>(TYPES.DocMode);
+      docModeService.setMode('edgeless', this.doc.id);
     } else {
       this.edgeless.service.viewport.setViewportByBound(
         bound,

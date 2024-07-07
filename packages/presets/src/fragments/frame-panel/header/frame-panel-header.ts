@@ -1,10 +1,14 @@
 import './frames-setting-menu.js';
 
 import type { EditorHost } from '@blocksuite/block-std';
-import { WithDisposable } from '@blocksuite/block-std';
-import type { EdgelessRootBlockComponent } from '@blocksuite/blocks';
+import { container, WithDisposable } from '@blocksuite/block-std';
+import type {
+  DocModeService,
+  EdgelessRootBlockComponent,
+} from '@blocksuite/blocks';
 import type { NavigatorMode } from '@blocksuite/blocks';
 import { createButtonPopper } from '@blocksuite/blocks';
+import { TYPES } from '@blocksuite/blocks';
 import { DisposableGroup } from '@blocksuite/global/utils';
 import { css, html, LitElement, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
@@ -131,7 +135,8 @@ export class FramePanelHeader extends WithDisposable(LitElement) {
 
   private _enterPresentationMode = () => {
     if (!this.edgeless) {
-      this.rootService.docModeService.setMode('edgeless');
+      const docModeService = container.get<DocModeService>(TYPES.DocMode);
+      docModeService.setMode('edgeless', this.editorHost.doc.id);
     }
 
     setTimeout(() => {

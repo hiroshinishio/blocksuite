@@ -1,26 +1,35 @@
-import type { BlockSpec, EditorHost } from '@blocksuite/block-std';
-import type { DocModeService, PageRootService } from '@blocksuite/blocks';
+import {
+  type BlockSpec,
+  container,
+  type EditorHost,
+} from '@blocksuite/block-std';
+import {
+  type DocModeService,
+  type PageRootService,
+  TYPES,
+} from '@blocksuite/blocks';
 import { assertExists } from '@blocksuite/global/utils';
 import { AffineEditorContainer } from '@blocksuite/presets';
-import type { BlockCollection } from '@blocksuite/store';
+import type { BlockCollection, Doc } from '@blocksuite/store';
 import type { DocCollection } from '@blocksuite/store';
 
 import { DocsPanel } from '../../_common/components/docs-panel.js';
 import { LeftSidePanel } from '../../_common/components/left-side-panel.js';
 import { QuickEdgelessMenu } from '../../_common/components/quick-edgeless-menu.js';
 import {
-  mockDocModeService,
   mockNotificationService,
   mockQuickSearchService,
 } from '../../_common/mock-services.js';
+import { LocalDocModeServiceImpl } from '../../_common/services/doc-mode.js';
 import { getExampleSpecs } from '../specs-examples/index.js';
 
-function setDocModeFromUrlParams(service: DocModeService) {
+function setDocModeFromUrlParams(doc: Doc) {
   const params = new URLSearchParams(location.search);
   const paramMode = params.get('mode');
   if (paramMode) {
     const docMode = paramMode === 'page' ? 'page' : 'edgeless';
-    service.setMode(docMode);
+    const service = container.get<DocModeService>(TYPES.DocMode);
+    service.setMode(docMode, doc.id);
   }
 }
 
@@ -36,8 +45,10 @@ export async function mountDefaultDocEditor(collection: DocCollection) {
   const app = document.getElementById('app');
   if (!app) return;
 
-  const modeService = mockDocModeService(doc.id);
-  setDocModeFromUrlParams(modeService);
+  // Use LocalDocModeServiceImpl instead of default implement
+  container.rebind<DocModeService>(TYPES.DocMode).to(LocalDocModeServiceImpl);
+
+  setDocModeFromUrlParams(doc);
   const editor = new AffineEditorContainer();
   const specs = getExampleSpecs();
   editor.pageSpecs = [...specs.pageModeSpecs].map(spec => {
@@ -57,7 +68,8 @@ export async function mountDefaultDocEditor(collection: DocCollection) {
     return spec;
   });
   editor.doc = doc;
-  editor.mode = modeService.getMode();
+  const modeService = container.get<DocModeService>(TYPES.DocMode);
+  editor.mode = modeService.getMode(doc.id);
   editor.slots.docLinkClicked.on(({ docId }) => {
     const target = collection.getDoc(docId);
     if (!target) {
@@ -67,6 +79,7 @@ export async function mountDefaultDocEditor(collection: DocCollection) {
     editor.doc = target;
   });
   editor.slots.docUpdated.on(({ newDocId }) => {
+    const modeService = container.get<DocModeService>(TYPES.DocMode);
     editor.mode = modeService.getMode(newDocId);
   });
 
@@ -122,9 +135,6 @@ export async function mountDefaultDocEditor(collection: DocCollection) {
               return Promise.resolve();
             },
           };
-          pageRootService.docModeService = mockDocModeService(
-            pageRootService.doc.id
-          );
         });
       },
     };

@@ -1,6 +1,9 @@
-import type {
-  EdgelessRootBlockComponent,
-  SurfaceRefBlockComponent,
+import { container } from '@blocksuite/block-std';
+import {
+  type DocModeService,
+  type EdgelessRootBlockComponent,
+  type SurfaceRefBlockComponent,
+  TYPES,
 } from '@blocksuite/blocks';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -177,8 +180,8 @@ describe('basic', () => {
     ) as HTMLElement;
 
     const switchEditor = vi.fn(() => {});
-    const pageService = editor.host.std.spec.getService('affine:page');
-    pageService.docModeService.onModeChange(switchEditor);
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
+    docModeService.onModeChange(switchEditor, editor.host.doc.id);
 
     expect(surfaceRef).instanceOf(Element);
     (surfaceRef as SurfaceRefBlockComponent).viewInEdgeless();

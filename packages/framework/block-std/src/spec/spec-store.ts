@@ -1,6 +1,10 @@
 import { DisposableGroup, Slot } from '@blocksuite/global/utils';
 
-import { BlockService } from '../service/index.js';
+import {
+  BlockService,
+  type BlockServiceOptions,
+  container,
+} from '../service/index.js';
 import type { BlockSpec } from './index.js';
 import { getSlots } from './slots.js';
 
@@ -49,11 +53,20 @@ export class SpecStore {
       const Service = newSpec.service ?? BlockService;
 
       const slots = getSlots();
-      const service = new Service({
+      const options: BlockServiceOptions = {
         flavour,
         std: this.std,
         slots,
-      });
+      };
+
+      let service;
+      // TODO just for test, only page service injectable
+      if (flavour === 'affine:page') {
+        const factory = container.get(flavour);
+        service = factory(options);
+      } else {
+        service = new Service(options);
+      }
 
       newSpec.setup?.(slots, this._disposables);
       this._services.set(flavour, service);

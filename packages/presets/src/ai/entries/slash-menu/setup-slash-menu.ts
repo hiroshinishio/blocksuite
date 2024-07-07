@@ -1,3 +1,4 @@
+import { container } from '@blocksuite/block-std';
 import type {
   AffineAIPanelWidget,
   AffineSlashMenuActionItem,
@@ -5,12 +6,14 @@ import type {
   AffineSlashMenuItem,
   AffineSlashSubMenu,
   AIItemConfig,
+  DocModeService,
 } from '@blocksuite/blocks';
 import {
   AFFINE_AI_PANEL_WIDGET,
   AffineSlashMenuWidget,
   AIStarIcon,
   MoreHorizontalIcon,
+  TYPES,
 } from '@blocksuite/blocks';
 import { assertExists } from '@blocksuite/global/utils';
 import { html } from 'lit';
@@ -38,9 +41,8 @@ export function setupSlashMenuEntry(slashMenu: AffineSlashMenuWidget) {
       if (affineAIPanelWidget === null) return false;
 
       const chain = rootElement.host.command.chain();
-      const editorMode = rootElement.service.docModeService.getMode(
-        rootElement.doc.id
-      );
+      const docModeService = container.get<DocModeService>(TYPES.DocMode);
+      const editorMode = docModeService.getMode(rootElement.doc.id);
 
       return item?.showWhen?.(chain, editorMode, rootElement.host) ?? true;
     };

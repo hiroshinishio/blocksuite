@@ -1,5 +1,6 @@
 /// <reference types="@blocksuite/global" />
 // manual import to avoid being tree-shaken
+import 'reflect-metadata';
 import './root-block/index.js';
 import './paragraph-block/index.js';
 import './list-block/index.js';
@@ -19,9 +20,7 @@ import { deserializeXYWH } from './surface-block/index.js';
 
 export * from './_common/adapters/index.js';
 export * from './_common/components/ai-item/index.js';
-export * from './_common/components/doc-mode-service.js';
 export type {
-  DocModeService,
   NotificationService,
   PeekViewService,
 } from './_common/components/index.js';
@@ -59,6 +58,7 @@ export {
 export { ReferenceNodeConfig } from './_common/inline/presets/nodes/reference-node/reference-config.js';
 export { AffineReference } from './_common/inline/presets/nodes/reference-node/reference-node.js';
 export { type TreeNode, type TreeNodeWithId } from './_common/mind-map/draw.js';
+export * from './_common/services/index.js';
 export * from './_common/test-utils/test-utils.js';
 export {
   ColorVariables,

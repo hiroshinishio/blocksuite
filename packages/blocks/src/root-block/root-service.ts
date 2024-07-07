@@ -1,15 +1,18 @@
-import type { BlockElement, EditorHost } from '@blocksuite/block-std';
+import type {
+  BlockElement,
+  BlockServiceOptions,
+  EditorHost,
+} from '@blocksuite/block-std';
 import { BlockService } from '@blocksuite/block-std';
 import { assertExists } from '@blocksuite/global/utils';
 import type { BlockModel } from '@blocksuite/store';
+import { inject, injectable } from 'inversify';
 
 import {
   FileDropManager,
   type FileDropOptions,
 } from '../_common/components/file-drop-manager.js';
 import {
-  createDocModeService,
-  type DocModeService,
   getSelectedPeekableBlocksCommand,
   type NotificationService,
   peekSelectedBlockCommand,
@@ -21,6 +24,8 @@ import {
   EMBED_CARD_WIDTH,
 } from '../_common/consts.js';
 import { ExportManager } from '../_common/export-manager/export-manager.js';
+import type { DocModeService } from '../_common/services/doc-mode/interface.js';
+import { TYPES } from '../_common/services/types.js';
 import {
   HtmlTransformer,
   MarkdownTransformer,
@@ -109,6 +114,7 @@ export interface TelemetryService {
   ): void;
 }
 
+@injectable()
 export class RootService extends BlockService<RootBlockModel> {
   get viewportElement() {
     const rootElement = this.std.view.viewFromPath('block', [
@@ -152,6 +158,8 @@ export class RootService extends BlockService<RootBlockModel> {
 
   private _embedBlockRegistry = new Set<EmbedOptions>();
 
+  private _docModeService: DocModeService;
+
   readonly fontLoader = new FontLoader();
 
   readonly editPropsStore: EditPropsStore = new EditPropsStore(this);
@@ -165,8 +173,6 @@ export class RootService extends BlockService<RootBlockModel> {
 
   peekViewService: PeekViewService | null = null;
 
-  docModeService: DocModeService = createDocModeService(this.doc.id);
-
   quickSearchService: QuickSearchService | null = null;
 
   telemetryService: TelemetryService | null = null;
@@ -176,6 +182,14 @@ export class RootService extends BlockService<RootBlockModel> {
     html: HtmlTransformer,
     zip: ZipTransformer,
   };
+
+  constructor(
+    @inject(TYPES.DocMode) docModeService: DocModeService,
+    options: BlockServiceOptions
+  ) {
+    super(options);
+    this._docModeService = docModeService;
+  }
 
   private _getLastNoteBlock() {
     const { doc } = this;
@@ -199,7 +213,7 @@ export class RootService extends BlockService<RootBlockModel> {
     index: number | undefined;
     model: BlockModel | null;
   } => {
-    const currentMode = this.docModeService.getMode();
+    const currentMode = this._docModeService.getMode(this.doc.id);
     const root = this.doc.root;
     if (!root)
       return {
@@ -245,7 +259,7 @@ export class RootService extends BlockService<RootBlockModel> {
   ) => {
     const host = this.host as EditorHost;
 
-    const mode = this.docModeService.getMode();
+    const mode = this._docModeService.getMode(this.doc.id);
     const { model, index } = this._getParentModelBySelection();
 
     if (mode === 'page') {

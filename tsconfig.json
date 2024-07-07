@@ -21,7 +21,9 @@
     "noImplicitOverride": true,
     "skipLibCheck": true,
     "incremental": true,
-    "composite": true
+    "composite": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "files": [],
   "references": [

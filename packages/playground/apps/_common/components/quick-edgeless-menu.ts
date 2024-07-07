@@ -17,16 +17,18 @@ import '@shoelace-style/shoelace/dist/themes/light.css';
 import '@shoelace-style/shoelace/dist/themes/dark.css';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 
-import { ShadowlessElement } from '@blocksuite/block-std';
+import { container, ShadowlessElement } from '@blocksuite/block-std';
 import type {
   AffineTextAttributes,
   DocMode,
+  DocModeService,
   SerializedXYWH,
 } from '@blocksuite/blocks';
 import {
   ColorVariables,
   EdgelessRootService,
   extractCssVariables,
+  TYPES,
 } from '@blocksuite/blocks';
 import type { DeltaInsert } from '@blocksuite/inline';
 import type { AffineEditorContainer } from '@blocksuite/presets';
@@ -117,7 +119,8 @@ export class QuickEdgelessMenu extends ShadowlessElement {
   };
 
   private _switchEditorMode() {
-    this._docMode = this.rootService.docModeService.toggleMode();
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
+    this._docMode = docModeService.toggleMode(this.doc.id);
   }
 
   private _addNote() {
@@ -310,9 +313,10 @@ export class QuickEdgelessMenu extends ShadowlessElement {
     super.connectedCallback();
 
     this._docMode = this.editor.mode;
-    this.rootService.docModeService.onModeChange(mode => {
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
+    docModeService.onModeChange(mode => {
       this._docMode = mode;
-    });
+    }, this.editor.doc.id);
     this.editor.slots.docUpdated.on(() => {
       this._docMode = this.editor.mode;
     });

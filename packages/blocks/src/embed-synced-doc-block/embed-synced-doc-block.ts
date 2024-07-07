@@ -1,6 +1,6 @@
 import './components/embed-synced-doc-card.js';
 
-import type { EditorHost } from '@blocksuite/block-std';
+import { container, type EditorHost } from '@blocksuite/block-std';
 import { assertExists } from '@blocksuite/global/utils';
 import {
   type BlockSelector,
@@ -19,6 +19,8 @@ import { EMBED_CARD_HEIGHT, EMBED_CARD_WIDTH } from '../_common/consts.js';
 import { EmbedBlockElement } from '../_common/embed-block-helper/embed-block-element.js';
 import { EmbedEdgelessIcon, EmbedPageIcon } from '../_common/icons/text.js';
 import { REFERENCE_NODE } from '../_common/inline/presets/nodes/consts.js';
+import type { DocModeService } from '../_common/services/index.js';
+import { TYPES } from '../_common/services/types.js';
 import { type DocMode, NoteDisplayMode } from '../_common/types.js';
 import { matchFlavours } from '../_common/utils/model.js';
 import { getThemeMode } from '../_common/utils/query.js';
@@ -517,13 +519,11 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockElement<
         this._setDocUpdatedAt();
       })
     );
-
-    this._syncedDocMode = this._rootService.docModeService.getMode(
-      this.model.pageId
-    );
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
+    this._syncedDocMode = docModeService.getMode(this.model.pageId);
     this._isEmptySyncedDoc = isEmptyDoc(this.syncedDoc, this._syncedDocMode);
     this.disposables.add(
-      this._rootService.docModeService.onModeChange(mode => {
+      docModeService.onModeChange(mode => {
         this._syncedDocMode = mode;
         this._isEmptySyncedDoc = isEmptyDoc(this.syncedDoc, mode);
       }, this.model.pageId)

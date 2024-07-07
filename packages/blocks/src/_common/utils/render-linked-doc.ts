@@ -1,5 +1,5 @@
 import type { EditorHost } from '@blocksuite/block-std';
-import { PathFinder } from '@blocksuite/block-std';
+import { container, PathFinder } from '@blocksuite/block-std';
 import { assertExists } from '@blocksuite/global/utils';
 import {
   type BlockModel,
@@ -23,6 +23,8 @@ import { SpecProvider } from '../../specs/utils/spec-provider.js';
 import { Bound, getCommonBound } from '../../surface-block/utils/bound.js';
 import { getSurfaceBlock } from '../../surface-ref-block/utils.js';
 import { EMBED_CARD_HEIGHT } from '../consts.js';
+import type { DocModeService } from '../services/index.js';
+import { TYPES } from '../services/types.js';
 import { type DocMode, NoteDisplayMode } from '../types.js';
 import { getBlockProps } from './block-props.js';
 import { matchFlavours } from './model.js';
@@ -587,7 +589,7 @@ export function createLinkedDocFromEdgelessElements(
       ids.set(model.id, newId);
     });
   });
-  const pageService = host.spec.getService('affine:page');
-  pageService.docModeService.setMode('edgeless', linkedDoc.id);
+  const service = container.get<DocModeService>(TYPES.DocMode);
+  service.setMode('edgeless', linkedDoc.id);
   return linkedDoc;
 }

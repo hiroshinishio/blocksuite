@@ -1,6 +1,6 @@
 import './surface-ref-portal.js';
 
-import { PathFinder } from '@blocksuite/block-std';
+import { container, PathFinder } from '@blocksuite/block-std';
 import { BlockElement } from '@blocksuite/block-std';
 import { assertExists, type Disposable, noop } from '@blocksuite/global/utils';
 import {
@@ -20,6 +20,7 @@ import {
   FrameIcon,
   MoreDeleteIcon,
 } from '../_common/icons/index.js';
+import { type DocModeService, TYPES } from '../_common/services/index.js';
 import { requestConnectedFrame } from '../_common/utils/event.js';
 import type { FrameBlockModel } from '../frame-block/index.js';
 import { getBackgroundGrid } from '../root-block/edgeless/utils/query.js';
@@ -595,7 +596,8 @@ export class SurfaceRefBlockComponent extends BlockElement<
     const pageService = this.std.spec.getService('affine:page');
 
     pageService.editPropsStore.setStorage('viewport', viewport);
-    pageService.docModeService.setMode('edgeless');
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
+    docModeService.setMode('edgeless', this.doc.id);
   }
 
   override render() {

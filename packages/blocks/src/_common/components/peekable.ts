@@ -105,7 +105,8 @@ export const Peekable =
     }
   ) =>
   (Class: C, context: ClassDecoratorContext) => {
-    assertExists(context.kind === 'class');
+    // TODO ts config issue
+    // assertExists(context.kind === 'class');
     const actions = Array.isArray(options.action)
       ? options.action
       : options.action

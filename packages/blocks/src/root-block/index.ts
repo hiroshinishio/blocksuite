@@ -1,4 +1,5 @@
 import './commands/index.js';
+import './page/page-root-config.js';
 
 import type { EdgelessRootService } from './edgeless/edgeless-root-service.js';
 import type { PageRootService } from './page/page-root-service.js';

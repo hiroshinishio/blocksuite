@@ -3,18 +3,23 @@ import './edgeless-editor.js';
 import '../fragments/doc-title/doc-title.js';
 import '../fragments/doc-meta-tags/doc-meta-tags.js';
 
-import { ShadowlessElement, WithDisposable } from '@blocksuite/block-std';
+import {
+  container,
+  ShadowlessElement,
+  WithDisposable,
+} from '@blocksuite/block-std';
 import type {
   AbstractEditor,
   DocMode,
+  DocModeService,
   EdgelessRootBlockComponent,
   PageRootBlockComponent,
-  PageRootService,
 } from '@blocksuite/blocks';
 import {
   EdgelessEditorBlockSpecs,
   PageEditorBlockSpecs,
   ThemeObserver,
+  TYPES,
 } from '@blocksuite/blocks';
 import { assertExists, Slot } from '@blocksuite/global/utils';
 import type { BlockModel, Doc } from '@blocksuite/store';
@@ -46,48 +51,6 @@ export class AffineEditorContainer
   extends WithDisposable(ShadowlessElement)
   implements AbstractEditor
 {
-  private get _pageSpecs() {
-    return [...this.pageSpecs].map(spec => {
-      if (spec.schema.model.flavour === 'affine:page') {
-        const setup = spec.setup;
-        spec = {
-          ...spec,
-          setup: (slots, disposable) => {
-            setup?.(slots, disposable);
-            slots.mounted.once(({ service }) => {
-              const { docModeService } = service as PageRootService;
-              disposable.add(
-                docModeService.onModeChange(this.switchEditor.bind(this))
-              );
-            });
-          },
-        };
-      }
-      return spec;
-    });
-  }
-
-  private get _edgelessSpecs() {
-    return [...this.edgelessSpecs].map(spec => {
-      if (spec.schema.model.flavour === 'affine:page') {
-        const setup = spec.setup;
-        spec = {
-          ...spec,
-          setup: (slots, disposable) => {
-            setup?.(slots, disposable);
-            slots.mounted.once(({ service }) => {
-              const { docModeService } = service as PageRootService;
-              disposable.add(
-                docModeService.onModeChange(this.switchEditor.bind(this))
-              );
-            });
-          },
-        };
-      }
-      return spec;
-    });
-  }
-
   get editor() {
     const editor =
       this.mode === 'page' ? this._pageEditor : this._edgelessEditor;
@@ -212,6 +175,10 @@ export class AffineEditorContainer
     this._disposables.add(
       this.doc.slots.rootAdded.on(() => this.requestUpdate())
     );
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
+    this._disposables.add(
+      docModeService.onModeChange(this.switchEditor.bind(this), this.doc.id)
+    );
   }
 
   /**
@@ -250,7 +217,7 @@ export class AffineEditorContainer
 
               <page-editor
                 .doc=${this.doc}
-                .specs=${this._pageSpecs}
+                .specs=${this.pageSpecs}
                 .hasViewport=${false}
               ></page-editor>
             </div>
@@ -258,7 +225,7 @@ export class AffineEditorContainer
         : html`
             <edgeless-editor
               .doc=${this.doc}
-              .specs=${this._edgelessSpecs}
+              .specs=${this.edgelessSpecs}
             ></edgeless-editor>
           `
     )}`;

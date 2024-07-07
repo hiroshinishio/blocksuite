@@ -1,3 +1,4 @@
+import { container } from '@blocksuite/block-std';
 import { assertExists } from '@blocksuite/global/utils';
 import { DocCollection } from '@blocksuite/store';
 import { html, nothing } from 'lit';
@@ -8,6 +9,7 @@ import { isPeekable, Peekable } from '../_common/components/peekable.js';
 import { EMBED_CARD_HEIGHT, EMBED_CARD_WIDTH } from '../_common/consts.js';
 import { EmbedBlockElement } from '../_common/embed-block-helper/index.js';
 import { REFERENCE_NODE } from '../_common/inline/presets/nodes/consts.js';
+import { type DocModeService, TYPES } from '../_common/services/index.js';
 import type { DocMode } from '../_common/types.js';
 import { renderLinkedDocInCard } from '../_common/utils/render-linked-doc.js';
 import { SyncedDocErrorIcon } from '../embed-synced-doc-block/styles.js';
@@ -335,11 +337,10 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockElement<
         })
       );
 
-      this._linkedDocMode = this._rootService.docModeService.getMode(
-        this.model.pageId
-      );
+      const docModeService = container.get<DocModeService>(TYPES.DocMode);
+      this._linkedDocMode = docModeService.getMode(this.model.pageId);
       this.disposables.add(
-        this._rootService.docModeService.onModeChange(mode => {
+        docModeService.onModeChange(mode => {
           this._linkedDocMode = mode;
         }, this.model.pageId)
       );

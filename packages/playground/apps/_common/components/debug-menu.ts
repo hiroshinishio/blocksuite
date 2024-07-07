@@ -17,12 +17,17 @@ import '@shoelace-style/shoelace/dist/themes/dark.css';
 import './left-side-panel.js';
 import './side-panel.js';
 
-import { type EditorHost, ShadowlessElement } from '@blocksuite/block-std';
+import {
+  container,
+  type EditorHost,
+  ShadowlessElement,
+} from '@blocksuite/block-std';
 import {
   type AffineTextAttributes,
   BlocksUtils,
   ColorVariables,
   defaultImageProxyMiddleware,
+  type DocModeService,
   extractCssVariables,
   FontFamilyVariables,
   HtmlTransformer,
@@ -34,6 +39,7 @@ import {
   StyleVariables,
   type SurfaceBlockComponent,
   type TreeNode,
+  TYPES,
   ZipTransformer,
 } from '@blocksuite/blocks';
 import { assertExists } from '@blocksuite/global/utils';
@@ -263,8 +269,8 @@ export class DebugMenu extends ShadowlessElement {
   accessor blockTypeDropdown!: SlDropdown;
 
   private _switchEditorMode() {
-    const { docModeService } = this.editor.host.spec.getService('affine:page');
-    this.mode = docModeService.toggleMode();
+    const docModeService = container.get<DocModeService>(TYPES.DocMode);
+    this.mode = docModeService.toggleMode(this.doc.id);
   }
 
   private _toggleOutlinePanel() {

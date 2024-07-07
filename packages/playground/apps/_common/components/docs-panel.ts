@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
-import { removeModeFromStorage } from '../mock-services.js';
+import { removeModeFromStorage } from '../services/doc-mode';
 
 @customElement('docs-panel')
 export class DocsPanel extends WithDisposable(ShadowlessElement) {
