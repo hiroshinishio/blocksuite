@@ -579,7 +579,7 @@ export class EdgelessSelectedRect extends WithDisposable(LitElement) {
   @property({ attribute: false })
   accessor edgeless!: EdgelessRootBlockComponent;
 
-  @property({ attribute: false })
+  @state()
   accessor autoCompleteOff = false;
 
   readonly slots = {
