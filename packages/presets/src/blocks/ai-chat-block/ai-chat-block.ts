@@ -27,16 +27,24 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
   override renderBlock() {
     console.log('render ai chat block');
     const { messages } = this.model;
+    const content =
+      messages.length > 0
+        ? messages
+        : `You are an expert in popular writing in Xiaohongshu. Please use the
+      the following steps to create and produce 1 text. After reading it
+      completely and confirming that you follow all the requirements, please
+      answer "I understand and am ready to accept input."`;
 
+    console.log('content: ', content);
     return html`<div class="affine-ai-chat-block-container">
-      <div class="chat-item">
-        <div class="chat-user">
+      <div class="ai-chat-item">
+        <div class="ai-chat-user">
           <span class="user-avatar"></span>
           <span class="user-name">zanwei guo</span>
         </div>
-        <div class="chat-message">${messages}</div>
+        <div class="ai-chat-message">${content}</div>
       </div>
-      <div class="chat-block-button" @click=${this._openChatBlock}>
+      <div class="ai-chat-block-button" @click=${this._openChatBlock}>
         ${ChatWithAIIcon} <span>AI chat block</span>
       </div>
     </div> `;

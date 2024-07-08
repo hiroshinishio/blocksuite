@@ -88,8 +88,14 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
             'affine:ai-chat',
             {
               xywh: bound.serialize(),
-              items: [],
+              messages: '',
+              sessionId: '',
             },
+            rootElement.surfaceBlockModel
+          );
+          console.log(
+            'add ai chat block',
+            aiChatBlockId,
             rootElement.surfaceBlockModel
           );
           service.selection.set({ elements: [aiChatBlockId], editing: false });

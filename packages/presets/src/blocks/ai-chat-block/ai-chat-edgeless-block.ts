@@ -14,9 +14,12 @@ export class EdgelessAIChatBlockComponent extends toEdgelessBlockElement(
   override renderEdgelessBlock() {
     console.log('render edgeless ai chat block');
     const style = {
+      width: '100%',
+      height: '100%',
+      borderRadius: '8px',
       transformOrigin: '0 0',
       boxShadow: 'var(--affine-shadow-1)',
-      borderRadius: '8px',
+      border: '1px solid var(--affine-border-color)',
     };
 
     return html`
