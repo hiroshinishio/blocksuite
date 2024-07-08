@@ -204,8 +204,6 @@ export class EdgelessRootBlockComponent extends BlockElement<
   private _resizeObserver: ResizeObserver | null = null;
 
   private _refreshLayerViewport = requestThrottledConnectFrame(() => {
-    if (!this.surface) return;
-
     const { zoom, translateX, translateY } = this.service.viewport;
     const { gap } = getBackgroundGrid(zoom, true);
 
@@ -436,6 +434,11 @@ export class EdgelessRootBlockComponent extends BlockElement<
     }
 
     this._disposables.add(() => {
+      console.log(
+        service.viewport.centerX,
+        service.viewport.centerY,
+        service.viewport.zoom
+      );
       service.editPropsStore.setStorage('viewport', {
         centerX: service.viewport.centerX,
         centerY: service.viewport.centerY,
@@ -852,6 +855,8 @@ export class EdgelessRootBlockComponent extends BlockElement<
         this._refreshLayerViewport();
       })
     );
+
+    this._refreshLayerViewport();
   }
 
   override connectedCallback() {

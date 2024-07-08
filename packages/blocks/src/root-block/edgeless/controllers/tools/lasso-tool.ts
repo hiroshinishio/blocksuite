@@ -26,7 +26,7 @@ class LassoOverlay extends Overlay {
 
   render(ctx: CanvasRenderingContext2D): void {
     const path = new Path2D(this.d);
-    const { zoom } = this._renderer;
+    const { zoom } = this._renderer.viewport;
     ctx.save();
     const primaryColor = this._renderer.getVariableColor(
       '--affine-primary-color'
