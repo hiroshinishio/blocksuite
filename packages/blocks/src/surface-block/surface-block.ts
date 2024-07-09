@@ -135,6 +135,7 @@ export class SurfaceBlockComponent extends BlockElement<
     const service = this.edgeless.service!;
 
     this._renderer = new Renderer({
+      viewport: service.viewport,
       layerManager: service.layer,
       enableStackingCanvas: true,
       provider: {
@@ -168,18 +169,12 @@ export class SurfaceBlockComponent extends BlockElement<
         this._renderer.refresh();
       })
     );
-    this._disposables.add(this._renderer.sync(this.edgeless.service.viewport));
     this._disposables.add(() => {
       this._renderer.dispose();
     });
     this._disposables.add(
       this._renderer.stackingCanvasUpdated.on(() => {
         this._emitStackingCanvasUpdate();
-      })
-    );
-    this._disposables.add(
-      this.std.event.slots.editorHostPanned.on(() => {
-        this._renderer.onResize();
       })
     );
   }
@@ -237,19 +232,21 @@ export class SurfaceBlockComponent extends BlockElement<
 
   /** @internal Only for testing */
   initDefaultGestureHandler() {
-    const { _renderer } = this;
+    const { _renderer, edgeless } = this;
+    const { viewport } = edgeless.service;
+
     _renderer.canvas.addEventListener('wheel', e => {
       e.preventDefault();
       // pan
       if (!e.ctrlKey) {
-        const dx = e.deltaX / _renderer.zoom;
-        const dy = e.deltaY / _renderer.zoom;
-        _renderer.setCenter(_renderer.centerX + dx, _renderer.centerY + dy);
+        const dx = e.deltaX / viewport.zoom;
+        const dy = e.deltaY / viewport.zoom;
+        viewport.setCenter(viewport.centerX + dx, viewport.centerY + dy);
       }
       // zoom
       else {
         const zoom = normalizeWheelDeltaY(e.deltaY);
-        _renderer.setZoom(zoom);
+        viewport.setZoom(zoom);
       }
     });
   }

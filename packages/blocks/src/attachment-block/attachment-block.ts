@@ -17,6 +17,7 @@ import {
 import { ThemeObserver } from '../_common/theme/theme-observer.js';
 import { humanFileSize } from '../_common/utils/math.js';
 import { getEmbedCardIcons } from '../_common/utils/url.js';
+import type { EdgelessRootService } from '../root-block/index.js';
 import { Bound } from '../surface-block/utils/bound.js';
 import {
   type AttachmentBlockModel,
@@ -37,11 +38,16 @@ export class AttachmentBlockComponent extends BlockComponent<
     return this._isInSurface;
   }
 
-  get edgeless() {
-    if (!this._isInSurface) {
+  get rootService() {
+    const service = this.host.spec.getService(
+      'affine:page'
+    ) as EdgelessRootService;
+
+    if (!service.surface) {
       return null;
     }
-    return this.host.querySelector('affine-edgeless-root');
+
+    return service;
   }
 
   private get _embedView() {
@@ -208,16 +214,18 @@ export class AttachmentBlockComponent extends BlockComponent<
     });
 
     if (this.isInSurface) {
-      this.edgeless?.slots.elementResizeStart.on(() => {
+      this.rootService?.slots.elementResizeStart.on(() => {
         this._isResizing = true;
         this._showOverlay = true;
       });
 
-      this.edgeless?.slots.elementResizeEnd.on(() => {
+      this.rootService?.slots.elementResizeEnd.on(() => {
         this._isResizing = false;
         this._showOverlay =
           this._isResizing || this._isDragging || !this._isSelected;
       });
+
+      this.style.position = 'absolute';
     }
   }
 
@@ -246,12 +254,12 @@ export class AttachmentBlockComponent extends BlockComponent<
       width: '100%',
       margin: '18px 0px',
     });
+
     if (this.isInSurface) {
       const width = EMBED_CARD_WIDTH[cardStyle];
       const height = EMBED_CARD_HEIGHT[cardStyle];
       const bound = Bound.deserialize(
-        (this.edgeless?.service.getElementById(this.model.id) ?? this.model)
-          .xywh
+        (this.rootService?.getElementById(this.model.id) ?? this.model).xywh
       );
       const scaleX = bound.w / width;
       const scaleY = bound.h / height;
@@ -261,6 +269,11 @@ export class AttachmentBlockComponent extends BlockComponent<
         transform: `scale(${scaleX}, ${scaleY})`,
         transformOrigin: '0 0',
       });
+
+      this.style.width = `${bound.w}px`;
+      this.style.height = `${bound.h}px`;
+      this.style.left = `${bound.x}px`;
+      this.style.top = `${bound.y}px`;
     }
 
     const embedView = this._embedView;

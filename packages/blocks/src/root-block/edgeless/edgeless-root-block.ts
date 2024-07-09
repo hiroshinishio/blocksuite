@@ -1,12 +1,15 @@
 import '../../surface-block/surface-block.js';
 import './components/toolbar/edgeless-toolbar.js';
+import './components/rects/edgeless-dragging-area-rect.js';
+import './components/rects/edgeless-selected-rect.js';
+import './components/presentation/edgeless-navigator-black-background.js';
 
 import type { SurfaceSelection } from '@blocksuite/block-std';
 import { BlockElement } from '@blocksuite/block-std';
 import { IS_WINDOWS } from '@blocksuite/global/env';
 import { assertExists, throttle } from '@blocksuite/global/utils';
 import type { BlockModel } from '@blocksuite/store';
-import { css, html } from 'lit';
+import { css, html, nothing } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
@@ -191,6 +194,9 @@ export class EdgelessRootBlockComponent extends BlockElement<
     }
   `;
 
+  @state()
+  private accessor _isResizing = false;
+
   private _viewportElement: HTMLElement | null = null;
 
   private readonly _themeObserver = new ThemeObserver();
@@ -198,8 +204,6 @@ export class EdgelessRootBlockComponent extends BlockElement<
   private _resizeObserver: ResizeObserver | null = null;
 
   private _refreshLayerViewport = requestThrottledConnectFrame(() => {
-    if (!this.surface) return;
-
     const { zoom, translateX, translateY } = this.service.viewport;
     const { gap } = getBackgroundGrid(zoom, true);
 
@@ -430,6 +434,11 @@ export class EdgelessRootBlockComponent extends BlockElement<
     }
 
     this._disposables.add(() => {
+      console.log(
+        service.viewport.centerX,
+        service.viewport.centerY,
+        service.viewport.zoom
+      );
       service.editPropsStore.setStorage('viewport', {
         centerX: service.viewport.centerX,
         centerY: service.viewport.centerY,
@@ -846,6 +855,8 @@ export class EdgelessRootBlockComponent extends BlockElement<
         this._refreshLayerViewport();
       })
     );
+
+    this._refreshLayerViewport();
   }
 
   override connectedCallback() {
@@ -871,6 +882,24 @@ export class EdgelessRootBlockComponent extends BlockElement<
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.mouseRoot = this.parentElement!;
     this._initTools();
+
+    this._disposables.add(
+      this.surfaceBlockModel.childrenUpdated.on(() => {
+        this.requestUpdate();
+      })
+    );
+
+    this._disposables.add(
+      this.slots.elementResizeStart.on(() => {
+        this._isResizing = true;
+      })
+    );
+
+    this._disposables.add(
+      this.slots.elementResizeEnd.on(() => {
+        this._isResizing = false;
+      })
+    );
   }
 
   override disconnectedCallback() {
@@ -903,6 +932,22 @@ export class EdgelessRootBlockComponent extends BlockElement<
           )}
         </div>
       </div>
+
+      <!-- need to be converted to widget -->
+      <edgeless-dragging-area-rect
+        .edgeless=${this}
+      ></edgeless-dragging-area-rect>
+
+      ${this._isResizing
+        ? nothing
+        : html`<note-slicer .edgeless=${this}></note-slicer>`}
+
+      <edgeless-selected-rect .edgeless=${this}></edgeless-selected-rect>
+      <edgeless-navigator-black-background
+        .edgeless=${this}
+      ></edgeless-navigator-black-background>
+      <!-- end -->
+
       <div class="widgets-container">${widgets}</div> `;
   }
 }

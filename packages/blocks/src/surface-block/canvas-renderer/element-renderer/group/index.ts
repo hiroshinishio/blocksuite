@@ -32,7 +32,7 @@ function renderTitle(
   ctx: CanvasRenderingContext2D,
   renderer: Renderer
 ) {
-  const zoom = renderer.zoom;
+  const zoom = renderer.viewport.zoom;
   const {
     titleWidth,
     text,
