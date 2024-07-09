@@ -93,11 +93,6 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
             },
             rootElement.surfaceBlockModel
           );
-          console.log(
-            'add ai chat block',
-            aiChatBlockId,
-            rootElement.surfaceBlockModel
-          );
           service.selection.set({ elements: [aiChatBlockId], editing: false });
         },
         'Shift-l': () => {

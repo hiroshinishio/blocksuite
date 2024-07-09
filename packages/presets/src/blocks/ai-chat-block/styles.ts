@@ -46,41 +46,9 @@ export const styles = css`
       gap: 4px;
     }
 
-    .ai-chat-user,
     .ai-chat-content {
       display: flex;
       width: 100%;
-    }
-
-    .ai-chat-user {
-      height: 24px;
-      flex-direction: row;
-      gap: 10px;
-      font-weight: 500;
-
-      .user-avatar-container {
-        width: 24px;
-        height: 24px;
-      }
-
-      .default-avatar,
-      .user-avatar-container img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-      }
-
-      .user-avatar-container img {
-        object-fit: cover;
-      }
-
-      .default-avatar {
-        background-color: var(--affine-primary-color);
-      }
-
-      .ai-icon {
-        color: var(--affine-brand-color);
-      }
     }
 
     .ai-chat-content {
