@@ -82,8 +82,8 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
           const { service } = rootElement;
           let { x, y } = service.viewport.center;
           x = x - 300 / 2;
-          y = y - 160 / 2;
-          const bound = new Bound(x, y, 300, 160);
+          y = y - 320 / 2;
+          const bound = new Bound(x, y, 300, 320);
           const aiChatBlockId = service.addBlock(
             'affine:ai-chat',
             {

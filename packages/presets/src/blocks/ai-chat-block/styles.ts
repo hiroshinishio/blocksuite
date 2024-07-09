@@ -17,46 +17,77 @@ export const styles = css`
     font-family: ${unsafeCSS(baseTheme.fontSansFamily)};
     border-radius: 8px;
 
-    .ai-chat-item,
+    .ai-chat-messages,
+    .ai-chat-message,
     .ai-chat-block-button {
       display: flex;
       width: 100%;
     }
-    .ai-chat-item {
+
+    .ai-chat-messages {
       flex-direction: column;
       flex: 1 0 0;
+      gap: 24px;
+      -webkit-mask-image: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0) -10.62%,
+        #fff 40.63%
+      );
+      mask-image: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0) -10.62%,
+        #fff 40.63%
+      );
+      overflow: hidden;
+    }
+
+    .ai-chat-message {
+      flex-direction: column;
       gap: 4px;
     }
+
     .ai-chat-user,
-    .ai-chat-message {
+    .ai-chat-content {
       display: flex;
       width: 100%;
     }
+
     .ai-chat-user {
       height: 24px;
       flex-direction: row;
       gap: 10px;
       font-weight: 500;
-      .user-avatar {
+
+      .user-avatar-container {
         width: 24px;
         height: 24px;
+      }
+
+      .default-avatar,
+      .user-avatar-container img {
+        width: 100%;
+        height: 100%;
         border-radius: 50%;
-        background: var(--affine-primary-color);
+      }
+
+      .user-avatar-container img {
+        object-fit: cover;
+      }
+
+      .default-avatar {
+        background-color: var(--affine-primary-color);
+      }
+
+      .ai-icon {
+        color: var(--affine-brand-color);
       }
     }
 
-    .ai-chat-message {
+    .ai-chat-content {
       padding-left: 34px;
       font-weight: 400;
-      overflow: hidden;
-      flex: 1 0 0;
-      -webkit-mask-image: linear-gradient(
-        to bottom,
-        black 50%,
-        transparent 100%
-      );
-      mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
     }
+
     .ai-chat-block-button {
       height: 22px;
       flex-direction: row;

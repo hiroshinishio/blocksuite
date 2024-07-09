@@ -12,7 +12,6 @@ export class EdgelessAIChatBlockComponent extends toEdgelessBlockElement(
   rootServiceFlavour!: 'affine:page';
 
   override renderEdgelessBlock() {
-    console.log('render edgeless ai chat block');
     const style = {
       width: '100%',
       height: '100%',
