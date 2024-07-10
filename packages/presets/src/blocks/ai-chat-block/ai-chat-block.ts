@@ -29,6 +29,7 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
     withAttachment = false
   ): ChatMessage {
     return {
+      id: 'vbdjbvshvjsdbvjs',
       content:
         role === 'user'
           ? 'You are an expert in popular writing in Xiaohongshu. Please use the following steps to create and produce 1 text. After reading it completely and confirming that you follow all the requirements, please answer "I understand and am ready to accept input."'
