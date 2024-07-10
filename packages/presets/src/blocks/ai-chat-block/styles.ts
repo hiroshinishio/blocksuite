@@ -46,9 +46,12 @@ export const styles = css`
       gap: 4px;
     }
 
-    .ai-chat-content {
+    .ai-chat-content,
+    .images-container {
       display: flex;
       width: 100%;
+      gap: 8px;
+      flex-direction: column;
     }
 
     .ai-chat-content {

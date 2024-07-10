@@ -1,6 +1,6 @@
 import { baseTheme } from '@toeverything/theme';
 import { css, html, LitElement, type TemplateResult, unsafeCSS } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
 @customElement('user-info')
 export class UserInfo extends LitElement {
@@ -60,13 +60,13 @@ export class UserInfo extends LitElement {
   @property({ attribute: false })
   accessor avatarIcon: TemplateResult<1> | undefined = undefined;
 
-  @state()
-  accessor _avatarLoadedFailed = false;
+  @property({ attribute: false })
+  accessor avatarLoadedFailed = false;
 
   private _handleAvatarLoadError(e: Event) {
     const target = e.target as HTMLImageElement;
     target.onerror = null;
-    this._avatarLoadedFailed = true;
+    this.avatarLoadedFailed = true;
   }
 
   override render() {
@@ -74,7 +74,7 @@ export class UserInfo extends LitElement {
       <div class="user-avatar-container">
         ${this.avatarIcon
           ? this.avatarIcon
-          : this.avatarUrl && !this._avatarLoadedFailed
+          : this.avatarUrl && !this.avatarLoadedFailed
             ? html`<img
                 .src=${this.avatarUrl}
                 @error=${this._handleAvatarLoadError}

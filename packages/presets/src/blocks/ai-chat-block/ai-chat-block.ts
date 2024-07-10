@@ -1,8 +1,9 @@
 import './components/user-info.js';
+import './components/chat-image.js';
 
 import { BlockElement } from '@blocksuite/block-std';
 import { peek, Peekable } from '@blocksuite/blocks';
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
@@ -34,7 +35,9 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
           : 'I understand and am ready to accept input.',
       role: role,
       createdAt: new Date().toISOString(),
-      attachments: withAttachment ? ['jdhhbhjbvhjdjdvbsj'] : undefined,
+      attachments: withAttachment
+        ? ['jdhhbhjbvhjdjdvbsj', 'jdhhbhjbvhjdjdvbsj']
+        : undefined,
       userId: role === 'user' ? 'vbdjbvshvjsdbvjs' : undefined,
       userName: role === 'user' ? 'Zanwei Guo' : undefined,
       userAvatarUrl: role === 'user' ? 'vsdvhbsjdvbdjhbvsjdb' : undefined,
@@ -45,7 +48,7 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
     const messages: ChatMessage[] = [];
     for (let i = 0; i < count; i++) {
       const role: 'user' | 'assistant' = i % 2 === 0 ? 'user' : 'assistant';
-      messages.push(this.generateMockChatMessage(role));
+      messages.push(this.generateMockChatMessage(role, true));
     }
     return JSON.stringify(messages);
   }
@@ -66,6 +69,20 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
     return userInfoTemplate;
   }
 
+  ChatImages(attachments: string[] | undefined) {
+    if (!attachments || attachments.length === 0) {
+      return nothing;
+    }
+
+    return html`<div class="images-container">
+      ${repeat(
+        attachments,
+        attachment => attachment,
+        attachment => html`<chat-image .blobId=${attachment}></chat-image>`
+      )}
+    </div>`;
+  }
+
   override renderBlock() {
     const mockMessages = this.generateMockMessages(2);
     // get the last two messages
@@ -78,8 +95,11 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
           message => message.createdAt,
           message => html`
             <div class="ai-chat-message">
-              ${html`${this.UserInfo(message)}`}
-              <div class="ai-chat-content">${message.content}</div>
+              ${this.UserInfo(message)}
+              <div class="ai-chat-content">
+                ${this.ChatImages(message.attachments)}
+                <div>${message.content}</div>
+              </div>
             </div>
           `
         )}
