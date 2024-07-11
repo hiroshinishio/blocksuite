@@ -8,8 +8,9 @@ import { customElement } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
 import { AffineAIIcon, ChatWithAIIcon } from '../_common/icon.js';
-import type { AIChatBlockModel, ChatMessage } from './ai-chat-model.js';
+import type { AIChatBlockModel } from './ai-chat-model.js';
 import { styles } from './styles.js';
+import { type ChatMessage, ChatMessagesSchema } from './types.js';
 
 @customElement('affine-ai-chat')
 @Peekable()
@@ -20,39 +21,16 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
     peek(this);
   };
 
-  private _getChatMessages = (messages: string) => {
-    return JSON.parse(messages) as ChatMessage[];
-  };
-
-  generateMockChatMessage(
-    role: 'user' | 'assistant',
-    withAttachment = false
-  ): ChatMessage {
-    return {
-      id: 'vbdjbvshvjsdbvjs',
-      content:
-        role === 'user'
-          ? 'You are an expert in popular writing in Xiaohongshu. Please use the following steps to create and produce 1 text. After reading it completely and confirming that you follow all the requirements, please answer "I understand and am ready to accept input."'
-          : 'I understand and am ready to accept input.',
-      role: role,
-      createdAt: new Date().toISOString(),
-      attachments: withAttachment
-        ? ['jdhhbhjbvhjdjdvbsj', 'jdhhbhjbvhjdjdvbsj']
-        : undefined,
-      userId: role === 'user' ? 'vbdjbvshvjsdbvjs' : undefined,
-      userName: role === 'user' ? 'Zanwei Guo' : undefined,
-      userAvatarUrl: role === 'user' ? 'vsdvhbsjdvbdjhbvsjdb' : undefined,
-    };
-  }
-
-  generateMockMessages(count: number): string {
-    const messages: ChatMessage[] = [];
-    for (let i = 0; i < count; i++) {
-      const role: 'user' | 'assistant' = i % 2 === 0 ? 'user' : 'assistant';
-      messages.push(this.generateMockChatMessage(role, true));
+  // Deserialize messages from JSON string and verify the type using zod
+  private _deserializeChatMessages = (messages: string) => {
+    const result = ChatMessagesSchema.safeParse(JSON.parse(messages));
+    if (result.success) {
+      return result.data;
+    } else {
+      console.error(result.error);
+      return [];
     }
-    return JSON.stringify(messages);
-  }
+  };
 
   UserInfo(message: ChatMessage) {
     const isUser = 'role' in message && message.role === 'user';
@@ -85,9 +63,9 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
   }
 
   override renderBlock() {
-    const mockMessages = this.generateMockMessages(2);
-    // get the last two messages
-    const messages = this._getChatMessages(mockMessages).slice(-2);
+    const messages = this._deserializeChatMessages(this.model.messages).slice(
+      -2
+    );
 
     return html`<div class="affine-ai-chat-block-container">
       <div class="ai-chat-messages">
