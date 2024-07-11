@@ -9,7 +9,7 @@ const ChatMessageSchema = z.object({
   attachments: z.array(z.string()).optional(),
   userId: z.string().optional(),
   userName: z.string().optional(),
-  userAvatarUrl: z.string().optional(),
+  avatarUrl: z.string().optional(),
 });
 
 export const ChatMessagesSchema = z.array(ChatMessageSchema);

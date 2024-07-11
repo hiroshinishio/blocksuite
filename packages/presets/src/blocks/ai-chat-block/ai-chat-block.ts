@@ -38,7 +38,7 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
     const userInfoTemplate = isUser
       ? html`<user-info
           .userName=${message.userName ?? 'You'}
-          .avatarUrl=${message.userAvatarUrl}
+          .avatarUrl=${message.avatarUrl}
         ></user-info>`
       : html`<user-info
           .userName=${'AFFiNE AI'}
