@@ -23,11 +23,10 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
 
   // Deserialize messages from JSON string and verify the type using zod
   private _deserializeChatMessages = (messages: string) => {
-    const result = ChatMessagesSchema.safeParse(JSON.parse(messages));
+    const result = ChatMessagesSchema.safeParse(messages);
     if (result.success) {
       return result.data;
     } else {
-      console.error(result.error);
       return [];
     }
   };
