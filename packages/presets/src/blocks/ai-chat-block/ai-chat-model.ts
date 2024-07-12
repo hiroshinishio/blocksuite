@@ -1,17 +1,6 @@
 import { selectable, type SerializedXYWH } from '@blocksuite/block-std';
 import { BlockModel, defineBlockSchema } from '@blocksuite/store';
 
-export type ChatMessage = {
-  id: string;
-  content: string;
-  role: 'user' | 'assistant';
-  createdAt: string;
-  attachments?: string[]; // blobIds
-  userId?: string;
-  userName?: string;
-  userAvatarUrl?: string;
-};
-
 type AIChatProps = {
   xywh: SerializedXYWH;
   index: string;
