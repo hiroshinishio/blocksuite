@@ -1,5 +1,6 @@
 import './components/user-info.js';
 import './components/chat-image.js';
+import './components/text-renderer.js';
 
 import { BlockElement } from '@blocksuite/block-std';
 import { peek, Peekable } from '@blocksuite/blocks';
@@ -69,6 +70,9 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
     const messages = this._deserializeChatMessages(this.model.messages).slice(
       -2
     );
+    const textRendererOptions = {
+      customHeading: true,
+    };
 
     return html`<div class="affine-ai-chat-block-container">
       <div class="ai-chat-messages">
@@ -80,7 +84,12 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
               ${this.UserInfo(message)}
               <div class="ai-chat-content">
                 ${this.ChatImages(message.attachments)}
-                <div>${message.content}</div>
+                <text-renderer
+                  .host=${this.host}
+                  .answer=${message.content}
+                  .options=${textRendererOptions}
+                  .state=${'finished'}
+                ></text-renderer>
               </div>
             </div>
           `
