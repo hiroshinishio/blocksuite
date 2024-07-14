@@ -56,7 +56,11 @@ export class AIChatBlockComponent extends BlockElement<AIChatBlockModel> {
       ${repeat(
         attachments,
         attachment => attachment,
-        attachment => html`<chat-image .blobId=${attachment}></chat-image>`
+        attachment =>
+          html`<chat-image
+            .imageUrl=${attachment}
+            .status=${'success'}
+          ></chat-image>`
       )}
     </div>`;
   }
