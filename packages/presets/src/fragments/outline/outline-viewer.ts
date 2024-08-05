@@ -67,23 +67,26 @@ export class OutlineViewer extends SignalWatcher(WithDisposable(LitElement)) {
     }
 
     .outline-viewer-container {
-      width: 0px;
       padding: 8px 0px;
       max-height: 100%;
       box-sizing: border-box;
       display: flex;
-      overflow-x: hidden;
       background: var(--affine-background-overlay-panel-color, #fbfbfc);
       box-shadow: 0px 6px 16px 0px rgba(0, 0, 0, 0.14);
+      border: 0.5px solid var(--affine-border-color, #e3e2e4);
       border-radius: var(--8, 8px);
       z-index: var(--affine-z-index-popover);
 
-      transition: width 0.3s;
+      opacity: 0;
+      transform: translateX(10px);
+      transition:
+        transform 120ms cubic-bezier(0.42, 0, 0.58, 1),
+        opacity 120ms cubic-bezier(0.42, 0, 0.58, 1);
     }
 
     .outline-viewer-container.show {
-      width: 200px;
-      border: 0.5px solid var(--affine-border-color, #e3e2e4);
+      opacity: 1;
+      transform: translateX(0px);
     }
 
     .outline-viewer-inner-container {
@@ -207,6 +210,33 @@ export class OutlineViewer extends SignalWatcher(WithDisposable(LitElement)) {
     );
   }
 
+  override firstUpdated(_changedProperties: PropertyValues) {
+    if (this._outlineViewerContainer) {
+      this._outlineViewerContainer.style.width = '0px';
+      const changeWidth = (e: TransitionEvent) => {
+        if (e.propertyName !== 'transform') return;
+        if (!this._outlineViewerContainer) return;
+
+        if (e.type === 'transitionstart' && this._showViewer) {
+          this._outlineViewerContainer.style.width = '200px';
+        }
+        if (e.type === 'transitionend' && !this._showViewer) {
+          this._outlineViewerContainer.style.width = '0px';
+        }
+      };
+      this.disposables.addFromEvent(
+        this._outlineViewerContainer,
+        'transitionstart',
+        changeWidth
+      );
+      this.disposables.addFromEvent(
+        this._outlineViewerContainer,
+        'transitionend',
+        changeWidth
+      );
+    }
+  }
+
   override render() {
     if (!this.editor || this.editor.mode === 'edgeless') return nothing;
 
@@ -234,6 +264,9 @@ export class OutlineViewer extends SignalWatcher(WithDisposable(LitElement)) {
 
   @query('.outline-heading-indicator[active]')
   private accessor _activeIndicator: HTMLElement | null = null;
+
+  @query('.outline-viewer-container')
+  private accessor _outlineViewerContainer: HTMLElement | null = null;
 
   @state()
   private accessor _showViewer: boolean = false;
